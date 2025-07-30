@@ -1,6 +1,20 @@
+# app/models/user.py
 from sqlmodel import SQLModel, Field
+from pydantic import EmailStr
 
-class User(SQLModel, table=True):
-    username: str = Field(primary_key=True, max_length=50)
-    name: str = Field(nullable=False, max_length=100)
-    email: str = Field(nullable=False, max_length=200)
+class UserBase(SQLModel):
+    username: str = Field(..., primary_key=True, max_length=50)
+    name:     str = Field(..., max_length=100)
+    email:    EmailStr
+
+class UserCreate(UserBase):
+    """Schema per la creazione di un utente (POST /users)."""
+    pass
+
+class UserRead(UserBase):
+    """Schema di output per un utente (GET /users e simili)."""
+    pass
+
+class User(UserBase, table=True):
+    """Tabella User."""
+    pass
