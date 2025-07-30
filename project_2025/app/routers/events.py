@@ -66,7 +66,7 @@ def register_user_to_event(
     - **name**: nome completo  
     - **email**: indirizzo email valido  
     """
-    # 1. Verifica esistenza evento
+    # Verifica esistenza evento
     event = session.get(Event, event_id)
     if not event:
         raise HTTPException(
@@ -74,7 +74,7 @@ def register_user_to_event(
             detail="Event not found"
         )
 
-    # 2. Recupera o crea utente
+    # Recupera o crea utente
     user = session.get(User, payload.username)
     if not user:
         user = User.from_orm(payload)
@@ -82,7 +82,7 @@ def register_user_to_event(
         session.commit()
         session.refresh(user)
 
-    # 3. Evita doppie iscrizioni
+    # Controllo doppie iscrizioni
     existing = session.exec(
         select(Registration)
         .where(Registration.username == payload.username)
@@ -94,7 +94,7 @@ def register_user_to_event(
             detail="Already registered"
         )
 
-    # 4. Salva la registrazione
+    # Salva la registrazione
     reg = Registration(username=payload.username, event_id=event_id)
     session.add(reg)
     session.commit()
